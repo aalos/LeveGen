@@ -26,6 +26,7 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="30" />
                     <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Horizontal" Grid.Row="0">
                     <Button Content="Add" Command="{Binding Add}" Margin="5" />
@@ -42,6 +43,7 @@
                 </ListView>
                 <CheckBox Grid.Row="2" Margin="5" Content="Optimize EXP" ToolTip="Only do the leve for it's level range. This is to maximize EXP" IsChecked="{Binding ContinueOnLevel}" />
                 <CheckBox Grid.Row="3" Margin="5" Content="Generate Lisbeth Orders" ToolTip="Create Lisbeth orders for the selected leves. If Optimize EXP is checked, it will create orders based on how many HQ items are required to get to the next tier of Leves, otherwise it will create orders to complete 5 leves." IsChecked="{Binding GenerateLisbeth}" />
+                <CheckBox Grid.Row="4" Margin="5" Content="Generate Lisbeth Orders First" ToolTip="Create the Lisbeth orders for all selected leves first then turn in the leves instead of performing each Lisbeth order right before the leve." IsChecked="{Binding LisbethFirst}" />
             </Grid>
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>

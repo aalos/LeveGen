@@ -20,7 +20,7 @@ using ff14bot.NeoProfiles;
 namespace LeveGen.Models
 {
 
-    
+
     public class WindowModelProvider : INotifyPropertyChanged
     {
         private LeveDatabase _database;
@@ -43,6 +43,7 @@ namespace LeveGen.Models
             };
             ContinueOnLevel = true;
             GenerateLisbeth = false;
+            LisbethFirst = false;
         }
 
         #region Commands
@@ -81,7 +82,7 @@ namespace LeveGen.Models
 
                     using (var stream = File.OpenWrite(file))
                     {
-                        LeveGenerator.Generate(_database, CurrentOrder, ContinueOnLevel, GenerateLisbeth, stream);
+                        LeveGenerator.Generate(_database, CurrentOrder, ContinueOnLevel, GenerateLisbeth, LisbethFirst, stream);
                     }
 
                     try
@@ -116,7 +117,7 @@ namespace LeveGen.Models
                     {
                         using (var savestrem = sr.OpenFile())
                         {
-                            LeveGenerator.Generate(_database, CurrentOrder, ContinueOnLevel, GenerateLisbeth, savestrem);
+                            LeveGenerator.Generate(_database, CurrentOrder, ContinueOnLevel, GenerateLisbeth, LisbethFirst, savestrem);
                         }
                     }
 
@@ -264,6 +265,18 @@ namespace LeveGen.Models
             set
             {
                 _GenerateLisbeth = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _LisbethFirst;
+
+        public bool LisbethFirst
+        {
+            get { return _LisbethFirst; }
+            set
+            {
+                _LisbethFirst = value;
                 OnPropertyChanged();
             }
         }

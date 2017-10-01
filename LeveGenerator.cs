@@ -26,15 +26,20 @@ namespace LeveGen
         /// <param name="currentOrder"></param>
         /// <param name="ContinueOnLevel"></param>
         /// <param name="savestrem"></param>
-        public static void Generate(LeveDatabase db, ObservableCollection<Leve> currentOrder, bool ContinueOnLevel, bool GenerateLisbeth, Stream savestrem)
+        public static void Generate(LeveDatabase db, ObservableCollection<Leve> currentOrder, bool ContinueOnLevel, bool GenerateLisbeth, bool LisbethFirst, Stream savestrem)
         {
             using (var sw = new StreamWriter(savestrem))
             {
                 sw.WriteLine(Header);
 
+                if (LisbethFirst)
+                {
+                    sw.WriteLine(WriteLisbeth(db, currentOrder));
+                }
+
                 foreach (var x in currentOrder.OrderBy(i => i.Level))
                 {
-                    sw.WriteLine(WriteOrder(db, x, ContinueOnLevel, GenerateLisbeth));
+                    sw.WriteLine(WriteOrder(db, x, ContinueOnLevel, GenerateLisbeth && !LisbethFirst));
                 }
 
                 sw.WriteLine(Footer);
@@ -68,7 +73,26 @@ namespace LeveGen
         private static string WriteLisbeth(LeveDatabase db, Leve leve, int numLeves)
         {
             return $@"
+        <RetainerVentures />
+        <RetainerFetchLisbeth LisbethOrderJson=""[{WriteLisbethSubOrder(leve, numLeves)}]"" />
         <Lisbeth Json=""[{WriteLisbethSubOrder(leve, numLeves)}]"" />";
+        }
+
+        private static string WriteLisbeth(LeveDatabase db, ObservableCollection<Leve> currentOrder) {
+            var output = $@"
+        <RetainerFetchLisbeth LisbethOrderJson=""[";
+            foreach (var x in currentOrder.OrderBy(i => i.Level)) {
+                output += WriteLisbethSubOrder(x, 1);
+            }
+
+            output += $@" ]"" />
+        <Lisbeth Json=""[";
+            foreach (var x in currentOrder.OrderBy(i => i.Level)) {
+                output += WriteLisbethSubOrder(x, 1);
+            }
+            output += $@" ]"" />";
+
+            return output;
         }
 
         private static string WriteOrder(LeveDatabase db, Leve leve, bool continueOnLevel, bool generateLisbeth)
