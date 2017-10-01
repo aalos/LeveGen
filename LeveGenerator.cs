@@ -101,6 +101,7 @@ namespace LeveGen
             var pickuploc = $"{formatFloat(pickup.Pos.X)},{formatFloat(pickup.Pos.Y)},{formatFloat(pickup.Pos.Z)}";
             var turnin = db.Npcs.First(i => i.NpcId == leve.TurnInNpc);
             var turninloc = $"{formatFloat(turnin.Pos.X)},{formatFloat(turnin.Pos.Y)},{formatFloat(turnin.Pos.Z)}";
+
             ClassJobType leveClass;
             ClassJobType.TryParse(leve.Classes, out leveClass);
             var col = (continueOnLevel) ? $" and Core.Me.Levels[ClassJobType.{leveClass}] &lt; " + (leve.Level >=50 ? leve.Level + 2 : leve.Level + 5) : "";
@@ -111,6 +112,7 @@ namespace LeveGen
 
             var output = "";
             var outputTurnin = $@"
+            <LgSwitchGearset Job=""{leve.Classes}"" />
         <While condition=""ItemCount({leve.ItemId}) &gt; {leve.NumItems - 1}{col} and Core.Me.Levels[ClassJobType.{leveClass}] &gt;= {leve.Level}"">
             <If Condition=""not IsOnMap({pickup.MapId})"">
                 <GetTo ZoneId=""{pickup.MapId}"" XYZ=""{pickuploc}"" />
@@ -122,15 +124,18 @@ namespace LeveGen
             <ExTurnInGuildLeve npcId=""{turnin.NpcId}"" npcLocation=""{turninloc}"" />
         </While>";
 
-            if (generateLisbeth) {
+            if (generateLisbeth)
+            {
                 // Optimize EXP is checked, figure out optimal orders to craft.
-                if (continueOnLevel) {
+                if (continueOnLevel)
+                {
                     var currentLevel = Core.Me.Levels[leveClass];
-                    var nextLeveJump = (leve.Level >= 50 ? 2 : 5);
+                    var nextLeveJump = leve.Level >= 50 ? 2 : 5;
                     var nextLeveLevel = leve.Level + nextLeveJump;
                     var requiredExp = 0;
 
-                    for (var i=0; i < nextLeveJump+1; i++) {
+                    for (var i=0; i < (nextLeveLevel - currentLevel); i++)
+                    {
                         requiredExp += ExpRequired[currentLevel+i];
                     }
 
@@ -145,13 +150,14 @@ namespace LeveGen
         </If>
         {outputTurnin}
         ";
-                if (continueOnLevel) {
+                if (continueOnLevel)
+                {
                     output += $@"
         </While>";
                 }
             }
-
-            else {
+            else
+            {
                 output += outputTurnin;
             }
 
@@ -165,7 +171,8 @@ namespace LeveGen
             return val.ToString("G", CultureInfo.CreateSpecificCulture("en-US"));
         }
 
-        private static Dictionary<int, int> ExpRequired = new Dictionary<int, int>() {
+        private static Dictionary<int, int> ExpRequired = new Dictionary<int, int>()
+        {
             {1,300},
             {2,600},
             {3,1100},
